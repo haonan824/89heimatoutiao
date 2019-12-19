@@ -7,16 +7,16 @@
       </el-col>
       <el-col :span="4">
         <el-row  type="flex" align="middle">
-            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" class="via"></el-avatar>
-            <el-dropdown trigger="click"  style="">
+            <el-avatar :src="userInfo.photo ? userInfo.photo : defaultImg" class="via"></el-avatar>
+            <el-dropdown  @command='handle'>
             <span class="el-dropdown-link">
-                楠欲上青天
+                {{userInfo.name}}
                 <i class="el-icon-arrow-down el-icon--right"></i>
              </span>
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>个人详细</el-dropdown-item>
-                <el-dropdown-item>git地址</el-dropdown-item>
-                <el-dropdown-item>退出</el-dropdown-item>
+                <el-dropdown-item command='init'>个人详细</el-dropdown-item>
+                <el-dropdown-item command='git'>博客园</el-dropdown-item>
+                <el-dropdown-item command='lgout'>退出</el-dropdown-item>
             </el-dropdown-menu>
             </el-dropdown>
         </el-row>
@@ -27,8 +27,33 @@
 
 <script>
 export default {
+  data () {
+    return {
+      userInfo: {}, // 用户信息
+      defaultImg: require('../../assets/img/login_dg.jpg')
+    }
+  },
   created () {
-
+    let token = window.localStorage.getItem('user-token')
+    this.$axios({
+      url: '/user/profile',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => {
+      console.log(res.data)
+      this.userInfo = res.data.data
+    })
+  },
+  methods: {
+    handle (command) {
+      if (command === 'lgout') {
+        window.localStorage.removeItem('user-token')
+        this.$router.push('/login')
+      } else if (command === 'git') {
+        window.location.href = 'https://www.cnblogs.com/haonanY/'
+      }
+    }
   }
 }
 </script>

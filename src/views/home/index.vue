@@ -7,7 +7,9 @@
       <el-header>
         <hometop></hometop>
       </el-header>
-      <el-main>内容</el-main>
+      <el-main>
+        <router-view/>
+      </el-main>
     </el-container>
   </el-container>
 </template>
