@@ -4,7 +4,7 @@
       <div class="login-img">
         <img src="../../assets/img/logo_index.png" alt />
       </div>
-      <el-form style="margin-top:20px" :model="loginForm" :rules='loginVerify'>
+      <el-form ref='myform' style="margin-top:20px" :model="loginForm" :rules='loginVerify'>
         <el-form-item  prop='phone'>
           <el-input v-model="loginForm.phone" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -12,11 +12,11 @@
           <el-input v-model="loginForm.auth" placeholder="请输入验证码" class="input-two"></el-input>
           <el-button plain class="login-button">发送验证码</el-button>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop='agree'>
           <el-checkbox v-model="loginForm.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button style="width:100%" type="primary">登录</el-button>
+          <el-button style="width:100%" type="primary" @click="submitlogin">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -45,6 +45,24 @@ export default {
           }
         } }]
       }
+    }
+  },
+  methods: {
+    submitlogin () {
+      this.$refs.myform.validate((isOk) => {
+        if (isOk) {
+          this.$axios.post('/authorizations', { mobile: this.loginForm.phone, code: this.loginForm.auth }).then(res => {
+            window.localStorage.setItem('user-token', res.data.data.token)
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$message({
+              showClose: true,
+              message: '手机号或验证码错误',
+              type: 'warning'
+            })
+          })
+        }
+      })
     }
   }
 }
