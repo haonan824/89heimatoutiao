@@ -31,7 +31,6 @@ export default {}
 <style lang="less" scoped>
 .home-list {
   background-color: #323745;
-  height: 100vh;
   overflow: hidden;
   .homeimg {
     background-color: #2e2f32;

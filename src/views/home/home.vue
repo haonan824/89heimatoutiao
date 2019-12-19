@@ -10,6 +10,7 @@ export default {
 
 <style lang="less" scoped>
   .homeimg{
-      background-image: url('../../assets/img/login_db.jpg')
+      background-image: url('../../assets/img/login_db.jpg');
+      height: 100vh;
   }
 </style>
