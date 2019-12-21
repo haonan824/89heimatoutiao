@@ -34,12 +34,8 @@ export default {
     }
   },
   created () {
-    let token = window.localStorage.getItem('user-token')
     this.$axios({
-      url: '/user/profile',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      url: '/user/profile'
     }).then(res => {
       console.log(res.data)
       this.userInfo = res.data.data
