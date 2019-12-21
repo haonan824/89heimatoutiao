@@ -52,14 +52,8 @@ export default {
       this.$refs.myform.validate((isOk) => {
         if (isOk) {
           this.$axios.post('/authorizations', { mobile: this.loginForm.phone, code: this.loginForm.auth }).then(res => {
-            window.localStorage.setItem('user-token', res.data.data.token)
+            window.localStorage.setItem('user-token', res.data.token)
             this.$router.push('/home')
-          }).catch(() => {
-            this.$message({
-              showClose: true,
-              message: '手机号或验证码错误',
-              type: 'warning'
-            })
           })
         }
       })
