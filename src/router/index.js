@@ -18,8 +18,8 @@ const routes = [
     path: '/home',
     component: Home,
     children: [
-      { path: '', component: home2 }
-      // { path: '/home/comment', component: () => import('../views/comment/bread-crumb.vue') }
+      { path: '', component: home2 },
+      { path: '/home/comment', component: () => import('../views/comment/index.vue') }
     ]
   }
   // {
