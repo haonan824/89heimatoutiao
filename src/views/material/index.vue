@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.8)">
     <el-row>
       <div slot="header" class="clearfix">
         <bread-crumbs>
@@ -7,7 +7,11 @@
         </bread-crumbs>
       </div>
     </el-row>
-     <el-button type="primary" style="float:right;" size="small" @click="uploading">上传图片</el-button>
+    <el-row type="flex" justify="end">
+      <el-upload :http-request='getImg' :show-file-list="false" action>
+        <el-button size="small" type="primary">点击上传</el-button>
+      </el-upload>
+    </el-row>
     <el-tabs v-model="mold" @tab-click="change">
       <el-tab-pane label="素材全部" name="all">
         <div class="divimg">
@@ -45,6 +49,7 @@
 export default {
   data () {
     return {
+      loading: false,
       list: {},
       mold: 'all',
       page: {
@@ -55,10 +60,23 @@ export default {
     }
   },
   methods: {
-    uploading () {
+    getImg (params) {
+      this.loading = true
+      console.log(params)
+      let from = new FormData()
+      from.append('image', params.file)
+      from.get('image')
       this.$axios({
         url: '/user/images',
-        headers: {}
+        method: 'post',
+        data: from
+      }).then(res => {
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
+        this.getimg()
+        this.loading = false
       })
     },
     change () {
@@ -70,6 +88,7 @@ export default {
       this.getimg()
     },
     getimg () {
+      this.loading = true
       this.$axios({
         url: '/user/images',
         params: {
@@ -81,6 +100,7 @@ export default {
         console.log(res)
         this.list = res.data.results
         this.page.total = res.data.total_count
+        this.loading = false
       })
     }
   },
