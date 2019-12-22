@@ -1,6 +1,7 @@
 import axios from 'axios'
 import router from '../router/index'
 import { Message } from 'element-ui'
+import JNOSBig from 'json-bigint'
 // 请求拦截
 axios.interceptors.request.use(function (config) {
   let token = window.localStorage.getItem('user-token')
@@ -9,7 +10,10 @@ axios.interceptors.request.use(function (config) {
 }, function (error) {
   return Promise.reject(error)
 })
-// 相应拦截
+axios.defaults.transformResponse = [function (data) {
+  return JNOSBig.parse(data)
+} ]
+// 像应拦截
 axios.interceptors.response.use(function (res) {
   return res.data ? res.data : {}
 }, function (error) {

@@ -37,7 +37,7 @@ export default {
     this.$axios({
       url: '/user/profile'
     }).then(res => {
-      console.log(res.data)
+      // console.log(res.data)
       this.userInfo = res.data
     })
   },
