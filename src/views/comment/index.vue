@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading='loader' element-loading-background="rgba(0, 0, 0, 0.8)">
     <div slot="header" class="clearfix">
       <bread-crumbs>
         <template slot="title">评论列表</template>
@@ -35,6 +35,7 @@
 export default {
   data () {
     return {
+      loader: 'false', // 默认加载状态
       list: [],
       page: {
         total: 0, // 总条数
@@ -43,7 +44,6 @@ export default {
       }
     }
   },
-
   methods: {
     formAtter: function (row, column, cellValue, index) {
       // row  当前行数据
@@ -53,18 +53,20 @@ export default {
       return cellValue ? '打开' : '关闭'
     },
     getpage (next) {
-      console.log(next)
+      // console.log(next)
       this.page.currentpage = next
       this.getdata()
     },
     getdata () {
+      this.loader = true // 打开加载状态
       this.$axios({
         url: '/articles',
         params: { response_type: 'comment', per_page: this.page.pagesizes, page: this.page.currentpage }
       }).then(res => {
         this.list = res.data.results
         this.page.total = res.data.total_count
-        console.log(res)
+        // console.log(res)
+        this.loader = false
       })
     },
     condition (row) {
