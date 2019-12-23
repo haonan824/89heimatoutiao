@@ -8,7 +8,7 @@
       </div>
     </el-row>
     <el-row type="flex" justify="end">
-      <el-upload :http-request='getImg' :show-file-list="false" action>
+      <el-upload :http-request='putImg' :show-file-list="false" action>
         <el-button size="small" type="primary">点击上传</el-button>
       </el-upload>
     </el-row>
@@ -18,8 +18,8 @@
           <el-card class="classsimg" v-for="itme in list" :key="itme.id">
             <img :src="itme.url" class="image" alt />
             <el-row class="icon">
-              <i class="el-icon-star-on" style="float: left;line-height: 30px;"></i>
-              <i class="el-icon-delete-solid" style="float:right; line-height: 30px;"></i>
+              <i class="el-icon-star-on computer" @click="getCollect(itme)"  :style="{color:itme.is_collected?'#FCEA1C':''}"></i>
+              <i class="el-icon-delete-solid" @click="removeImg(itme)" style="float:right; line-height: 30px;"></i>
             </el-row>
           </el-card>
         </div>
@@ -60,7 +60,30 @@ export default {
     }
   },
   methods: {
-    getImg (params) {
+    getCollect (itme) { // 收藏
+      this.$axios({
+        url: `/user/images/${itme.id}`,
+        method: 'put',
+        data: {
+          collect: !itme.is_collected
+        }
+      }).then(res => {
+        // console.log(res)
+        this.getimg()
+      })
+    },
+    removeImg (itme) { // 删除
+      this.$confirm('你确定要删除此照片吗').then(() => {
+        this.$axios({
+          url: `/user/images/${itme.id}`,
+          method: 'delete'
+        }).then(res => {
+          console.log(res)
+          this.getimg()
+        })
+      })
+    },
+    putImg (params) { // 上传
       this.loading = true
       console.log(params)
       let from = new FormData()
@@ -79,15 +102,15 @@ export default {
         this.loading = false
       })
     },
-    change () {
+    change () { // 收藏页面初始化
       this.page.currentPage = 1
       this.getimg()
     },
-    pages (next) {
+    pages (next) { // 当前页数
       this.page.currentPage = next
       this.getimg()
     },
-    getimg () {
+    getimg () { // 获取图片
       this.loading = true
       this.$axios({
         url: '/user/images',
@@ -97,7 +120,7 @@ export default {
           per_page: this.page.pageSize
         }
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         this.list = res.data.results
         this.page.total = res.data.total_count
         this.loading = false
@@ -130,6 +153,10 @@ export default {
       position: absolute;
       bottom: 0;
       left: 0;
+      .computer{
+          float: left;
+          line-height: 30px;
+      }
     }
   }
 }
