@@ -1,12 +1,10 @@
 <template>
   <el-card v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-    <el-row>
       <div slot="header" class="clearfix">
         <bread-crumbs>
           <template slot="title">素材管理</template>
         </bread-crumbs>
       </div>
-    </el-row>
     <el-row type="flex" justify="end">
       <el-upload :http-request='putImg' :show-file-list="false" action>
         <el-button size="small" type="primary">点击上传</el-button>

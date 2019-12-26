@@ -17,7 +17,7 @@ axios.defaults.transformResponse = [function (data) {
 axios.interceptors.response.use(function (res) {
   return res.data ? res.data : {}
 }, function (error) {
-  console.log(error.response)
+  // console.log(error.response)
   let state = error.response.status
   let message = ''
   if (state === 400) {

@@ -59,8 +59,8 @@
           </el-row>
         </el-col>
         <el-col :span="3">
-          <span class="handle">
-            <i class="el-icon-edit"></i>修改
+          <span class="handle" @click="alter(itme.id)">
+            <i class="el-icon-edit" ></i>修改
           </span>
           <span class="handle" @click="removearticle(itme.id.toString())">
             <i class="el-icon-delete"></i>删除
@@ -97,6 +97,9 @@ export default {
     }
   },
   methods: {
+    alter (id) { // 修改
+      this.$router.push(`/home/publish/${id.toString()}`)
+    },
     removearticle (id) {
       this.$confirm('此操作将永久删除该文件, 是否继续?').then(() => {
         this.$axios({
