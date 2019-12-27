@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.8)">
     <div slot="header" class="clearfix">
       <bread-crumbs>
         <template slot="title">发布文章</template>
@@ -13,13 +13,13 @@
         <quill-editor style="height:300px" v-model="formData.content"></quill-editor>
       </el-form-item>
       <el-form-item label="封面：">
-        <el-radio-group v-model="formData.cover.type">
+        <el-radio-group @change="putImg" v-model="formData.cover.type">
           <el-radio :label="1">单图</el-radio>
           <el-radio :label="3">三图</el-radio>
           <el-radio :label="0">无图</el-radio>
           <el-radio :label="-1">自动</el-radio>
         </el-radio-group>
-        <img-frame :list='formData.cover.images'></img-frame>
+        <img-frame @putimg='gain' :list='formData.cover.images'></img-frame>
       </el-form-item>
       <el-form-item prop='channel_id' label="频道：">
          <el-select placeholder="请选择" v-model="formData.channel_id" >
@@ -38,6 +38,7 @@
 export default {
   data () {
     return {
+      loading: false,
       channels: [],
       formData: {
         title: '', // 标题
@@ -56,6 +57,18 @@ export default {
     }
   },
   methods: {
+    gain (img, index) {
+      this.formData.cover.images = this.formData.cover.images.map((itme, i) => i === index ? img : itme)
+    },
+    putImg () {
+      if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
+        this.formData.cover.images = []
+      } else if (this.formData.cover.type === 1) {
+        this.formData.cover.images = ['']
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', '']
+      }
+    },
     getassign (articleId) { // 获取指定ID文章
       // console.log(articleId)
       this.$axios({
@@ -65,12 +78,14 @@ export default {
       })
     },
     getchannel () {
+      this.loading = true
       // 获取频道
       this.$axios({
         url: '/channels'
       }).then(res => {
         // console.log(res)
         this.channels = res.data.channels
+        this.loading = false
       })
     },
     putdata (judge) { // 新建/修改
@@ -85,6 +100,7 @@ export default {
         }).then(res => {
           // console.log(res)
           this.$router.push('/home/articles')
+          this.loading = false
         })
       })
     }
@@ -108,13 +124,13 @@ export default {
       }
     },
     'formData.cover.type': function () {
-      if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
-        this.formData.cover.images = []
-      } else if (this.formData.cover.type === 1) {
-        this.formData.cover.images = ['']
-      } else if (this.formData.cover.type === 3) {
-        this.formData.cover.images = ['', '', '']
-      }
+    //   if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
+    //     this.formData.cover.images = []
+    //   } else if (this.formData.cover.type === 1) {
+    //     this.formData.cover.images = ['']
+    //   } else if (this.formData.cover.type === 3) {
+    //     this.formData.cover.images = ['', '', '']
+    //   }
     }
   },
   created () {

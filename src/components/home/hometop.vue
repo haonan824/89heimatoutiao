@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
@@ -34,14 +35,20 @@ export default {
     }
   },
   created () {
-    this.$axios({
-      url: '/user/profile'
-    }).then(res => {
-      // console.log(res.data)
-      this.userInfo = res.data
+    this.getintro()
+    eventBus.$on('Implementation', () => {
+      this.getintro()
     })
   },
   methods: {
+    getintro () {
+      this.$axios({
+        url: '/user/profile'
+      }).then(res => {
+      // console.log(res.data)
+        this.userInfo = res.data
+      })
+    },
     handle (command) {
       if (command === 'lgout') {
         window.localStorage.removeItem('user-token')

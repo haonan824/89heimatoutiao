@@ -1,7 +1,7 @@
 <template>
-  <el-card class="boss">
+  <el-card class="boss" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.8)">
     <bread-crumbs slot="header">
-      <template slot="title">文章列表</template>
+      <template slot="title">内容列表</template>
     </bread-crumbs>
     <el-row class="line" type="flex" align="middle">
       <span class="option">文章状态：</span>
@@ -83,6 +83,7 @@
 export default {
   data () {
     return {
+      loading: false,
       getimg: require('../../assets/img/mao.jpg'),
       formData: {
         status: 5, // 默认状态
@@ -146,6 +147,7 @@ export default {
     },
     getdetails (params) {
       // 获取数据
+      this.loading = true
       this.$axios({
         url: '/articles',
         params
@@ -153,6 +155,7 @@ export default {
         this.list = res.data.results
         this.total_count = res.data.total_count
         // console.log(res)
+        this.loading = false
       })
     }
   },
@@ -216,6 +219,7 @@ export default {
     font-size: 14px;
     margin-right: 5px;
     cursor: pointer;
+
   }
 }
 </style>

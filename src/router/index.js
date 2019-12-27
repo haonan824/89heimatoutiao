@@ -23,7 +23,8 @@ const routes = [
       { path: 'material', component: () => import('../views/material/index.vue') },
       { path: 'articles', component: () => import('../views/content/index.vue') },
       { path: 'publish', component: () => import('../views/publish/index.vue') },
-      { path: 'publish/:articleId', component: () => import('../views/publish/index.vue') }
+      { path: 'publish/:articleId', component: () => import('../views/publish/index.vue') },
+      { path: 'account', component: () => import('../views/account/index.vue') }
     ]
   }
   // {
