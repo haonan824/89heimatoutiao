@@ -55,6 +55,8 @@ export default {
         this.$router.push('/login')
       } else if (command === 'git') {
         window.location.href = 'https://www.cnblogs.com/haonanY/'
+      } else if (command === 'init') {
+        this.$router.push('/home/account')
       }
     }
   }
