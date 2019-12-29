@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { getphoto, getuser, getusers } from '../../acticles/articles'
 import eventBus from '../../utils/eventBus'
 export default {
   data () {
@@ -54,47 +55,32 @@ export default {
     }
   },
   methods: {
-    putimg (img) {
+    async putimg (img) { // 头像上传
       let data = new FormData()
       data.append('photo', img.file)
-      this.$axios({
-        url: '/user/photo',
-        method: 'patch',
-        data
-      }).then(res => {
-        this.formData.photo = res.data.photo
-        this.$message({
-          message: '上传成功',
-          type: 'success'
-        })
-        eventBus.$emit('Implementation')
+      let res = await getphoto(data)
+      this.formData.photo = res.data.photo
+      this.$message({
+        message: '上传成功',
+        type: 'success'
       })
+      eventBus.$emit('Implementation')
     },
-    putintro () {
-      this.$refs.myform.validate((isOk) => {
+    putintro () { // 更改用户信息
+      this.$refs.myform.validate(async (isOk) => {
         if (isOk) {
-          this.$axios({
-            url: '/user/profile',
-            method: 'patch',
-            data: this.formData
-          }).then(res => {
-            // console.log(res)
-            this.$message({
-              message: '更改成功',
-              type: 'success'
-            })
-            eventBus.$emit('Implementation')
+          await getuser(this.formData)
+          this.$message({
+            message: '更改成功',
+            type: 'success'
           })
+          eventBus.$emit('Implementation')
         }
       })
     },
-    getmessage () {
-      this.$axios({
-        url: '/user/profile'
-      }).then(res => {
-        console.log(res)
-        this.formData = res.data
-      })
+    async getmessage () {
+      let res = await getusers()
+      this.formData = res.data
     }
   },
   created () {
@@ -106,7 +92,7 @@ export default {
 <style lang='less' scoped>
 .imgs {
   position: absolute;
-  right: 250px;
+  right: 20%;
   img {
     width: 200px;
     height: 200px;

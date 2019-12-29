@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { getregister } from '../../acticles/articles'
 export default {
   data () {
     return {
@@ -49,12 +50,11 @@ export default {
   },
   methods: {
     submitlogin () {
-      this.$refs.myform.validate((isOk) => {
+      this.$refs.myform.validate(async (isOk) => {
         if (isOk) {
-          this.$axios.post('/authorizations', { mobile: this.loginForm.phone, code: this.loginForm.auth }).then(res => {
-            window.localStorage.setItem('user-token', res.data.token)
-            this.$router.push('/home')
-          })
+          let res = await getregister(this.loginForm.phone, this.loginForm.auth)
+          window.localStorage.setItem('user-token', res.data.token)
+          this.$router.push('/home')
         }
       })
     }

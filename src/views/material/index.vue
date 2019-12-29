@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { getcollect, getdelete, getpicture, getimg } from '../../acticles/articles'
 export default {
   data () {
     return {
@@ -58,47 +59,28 @@ export default {
     }
   },
   methods: {
-    getCollect (itme) { // 收藏
-      this.$axios({
-        url: `/user/images/${itme.id}`,
-        method: 'put',
-        data: {
-          collect: !itme.is_collected
-        }
-      }).then(res => {
-        // console.log(res)
-        this.getimg()
-      })
+    async getCollect (itme) { // 收藏
+      await getcollect(itme.id, itme.is_collected)
+      this.getimg()
     },
-    removeImg (itme) { // 删除
-      this.$confirm('你确定要删除此照片吗').then(() => {
-        this.$axios({
-          url: `/user/images/${itme.id}`,
-          method: 'delete'
-        }).then(res => {
-          console.log(res)
-          this.getimg()
-        })
-      })
+    async removeImg (itme) { // 删除
+      await this.$confirm('你确定要删除此照片吗')
+      await getdelete(itme.id)
+      this.getimg()
     },
-    putImg (params) { // 上传
+    async putImg (params) { // 上传
       this.loading = true
       console.log(params)
       let from = new FormData()
       from.append('image', params.file)
       from.get('image')
-      this.$axios({
-        url: '/user/images',
-        method: 'post',
-        data: from
-      }).then(res => {
-        this.$message({
-          message: '上传成功',
-          type: 'success'
-        })
-        this.getimg()
-        this.loading = false
+      await getpicture(from)
+      this.$message({
+        message: '上传成功',
+        type: 'success'
       })
+      this.getimg()
+      this.loading = false
     },
     change () { // 收藏页面初始化
       this.page.currentPage = 1
@@ -108,21 +90,12 @@ export default {
       this.page.currentPage = next
       this.getimg()
     },
-    getimg () { // 获取图片
+    async getimg () { // 获取图片
       this.loading = true
-      this.$axios({
-        url: '/user/images',
-        params: {
-          collect: this.mold === 'collect',
-          page: this.page.currentPage,
-          per_page: this.page.pageSize
-        }
-      }).then(res => {
-        // console.log(res)
-        this.list = res.data.results
-        this.page.total = res.data.total_count
-        this.loading = false
-      })
+      let res = await getimg(this.mold, this.page.currentPage, this.page.pageSize)
+      this.list = res.data.results
+      this.page.total = res.data.total_count
+      this.loading = false
     }
   },
   created () {

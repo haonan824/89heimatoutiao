@@ -35,10 +35,11 @@
 </template>
 
 <script>
+import { getchannels, getarticles, getarticlesid } from '../../acticles/articles'
 export default {
   data () {
     return {
-      loading: false,
+      loading: true,
       channels: [],
       formData: {
         title: '', // 标题
@@ -69,46 +70,28 @@ export default {
         this.formData.cover.images = ['', '', '']
       }
     },
-    getassign (articleId) { // 获取指定ID文章
-      // console.log(articleId)
-      this.$axios({
-        url: `/articles/${articleId}`
-      }).then(result => {
-        this.formData = result.data // 将指定文章数据给data数据
-      })
+    async getassign (articleId) { // 获取指定ID文章
+      let res = await getarticlesid(articleId)
+      this.formData = res.data// 将指定文章数据给data数据
     },
-    getchannel () {
+    async getchannel () {
       this.loading = true
       // 获取频道
-      this.$axios({
-        url: '/channels'
-      }).then(res => {
-        // console.log(res)
-        this.channels = res.data.channels
-        this.loading = false
-      })
+      let res = await getchannels()
+      this.channels = res.data.channels
+      this.loading = false
     },
     putdata (judge) { // 新建/修改
-      // console.log(judge)
-      this.$refs.checkout.validate((isOk) => {
+      this.$refs.checkout.validate(async (isOk) => {
         let { articleId } = this.$route.params
-        this.$axios({
-          url: articleId ? `/articles/${articleId}` : '/articles',
-          method: articleId ? 'put' : 'post',
-          data: this.formData,
-          params: { draft: judge }
-        }).then(res => {
-          // console.log(res)
-          this.$router.push('/home/articles')
-          this.loading = false
-        })
+        await getarticles(articleId, this.formData, judge)
+        this.$router.push('/home/articles')
       })
     }
   },
   watch: {
     // 解决两个路由共用一个组件的问题
     $route: function (to) {
-      console.log(to)
       if (Object.keys(to.params).length) {
         this.getassign(to.params.articleId)
       } else {
@@ -122,15 +105,6 @@ export default {
           channel_id: null
         }
       }
-    },
-    'formData.cover.type': function () {
-    //   if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
-    //     this.formData.cover.images = []
-    //   } else if (this.formData.cover.type === 1) {
-    //     this.formData.cover.images = ['']
-    //   } else if (this.formData.cover.type === 3) {
-    //     this.formData.cover.images = ['', '', '']
-    //   }
     }
   },
   created () {

@@ -2,7 +2,7 @@
   <div>
     <el-row style="height:60px" type="flex" align="middle" justify="space-between">
       <el-col :span="7">
-        <i class="el-icon-s-unfold" style="margin-right:5px"></i>
+        <i @click="getclick" :class="variable ? 'el-icon-s-unfold' : 'el-icon-s-fold'" style="margin-right:5px"></i>
         <span>江苏传智播客教育科技股份有限公司</span>
       </el-col>
       <el-col :span="4">
@@ -30,6 +30,7 @@ import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
+      variable: false,
       userInfo: {}, // 用户信息
       defaultImg: require('../../assets/img/login_dg.jpg')
     }
@@ -41,6 +42,10 @@ export default {
     })
   },
   methods: {
+    getclick () {
+      this.variable = !this.variable
+      eventBus.$emit('transform')
+    },
     getintro () {
       this.$axios({
         url: '/user/profile'

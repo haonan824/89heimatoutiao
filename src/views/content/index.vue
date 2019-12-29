@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { getamend, getchannels, getdata } from '../../acticles/articles'
 export default {
   data () {
     return {
@@ -101,32 +102,24 @@ export default {
     alter (id) { // 修改
       this.$router.push(`/home/publish/${id.toString()}`)
     },
-    removearticle (id) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?').then(() => {
-        this.$axios({
-          url: `/articles/${id}`,
-          method: 'delete'
-        }).then(res => {
-          this.$message({
-            showClose: true,
-            message: '删除成功',
-            type: 'success'
-          })
-          this.getstate()
-        })
+    async removearticle (id) {
+      await this.$confirm('此操作将永久删除该文件, 是否继续?')
+      await getamend(id)
+      this.$message({
+        showClose: true,
+        message: '删除成功',
+        type: 'success'
       })
+      this.getstate()
     },
     getpages (next) { // 分页
       this.formData.currentPage = next
       this.getstate()
     },
-    getchannel () {
+    async getchannel () {
       // 获取频道
-      this.$axios({
-        url: '/channels'
-      }).then(res => {
-        this.channels = res.data.channels
-      })
+      let res = await getchannels()
+      this.channels = res.data.channels
     },
     getarticle () {
       // 获取
@@ -145,18 +138,14 @@ export default {
       }
       this.getdetails(params)
     },
-    getdetails (params) {
+    async getdetails (params) {
       // 获取数据
       this.loading = true
-      this.$axios({
-        url: '/articles',
-        params
-      }).then(res => {
-        this.list = res.data.results
-        this.total_count = res.data.total_count
-        // console.log(res)
-        this.loading = false
-      })
+      let res = await getdata(params)
+      this.list = res.data.results
+      this.total_count = res.data.total_count
+      // console.log(res)
+      this.loading = false
     }
   },
   filters: {

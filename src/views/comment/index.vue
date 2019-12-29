@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { getstate, getstatus } from '../../acticles/articles'
 export default {
   data () {
     return {
@@ -57,38 +58,22 @@ export default {
       this.page.currentpage = next
       this.getdata()
     },
-    getdata () {
-      this.loader = true // 打开加载状态
-      this.$axios({
-        url: '/articles',
-        params: { response_type: 'comment', per_page: this.page.pagesizes, page: this.page.currentpage }
-      }).then(res => {
-        this.list = res.data.results
-        this.page.total = res.data.total_count
-        // console.log(res)
-        this.loader = false
-      })
+    async getdata () {
+      this.loader = true // 打开加载状态 //获取评论内容 分页
+      let res = await getstate(this.page.pagesizes, this.page.currentpage)
+      this.list = res.data.results
+      this.page.total = res.data.total_count
+      // console.log(res)
+      this.loader = false
     },
-    condition (row) {
+    async condition (row) { // 打开状态
       let mess = row.comment_status ? '关闭' : '打开'
-      console.log(row.id)
-      this.$confirm(`你确定要${mess}吗`).then(() => {
-        this.$axios({
-          url: '/comments/status',
-          method: 'put',
-          params: {
-            article_id: row.id.toString()
-          },
-          data: {
-            allow_comment: !row.comment_status
-          }
-        }).then(res => {
-          this.getdata()
-          this.$message({
-            type: 'success',
-            message: '更改成功!'
-          })
-        })
+      await this.$confirm(`你确定要${mess}吗`)
+      await getstatus(row.id.toString(), row.comment_status)
+      this.getdata()
+      this.$message({
+        type: 'success',
+        message: '更改成功!'
       })
     }
   },

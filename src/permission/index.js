@@ -1,5 +1,8 @@
 import router from '../router'
+import progress from 'nprogress'
+import 'nprogress/nprogress.css'
 router.beforeEach((to, from, next) => {
+  progress.start()
   if (to.path.startsWith('/home')) {
     let token = window.localStorage.getItem('user-token')
     if (token) {
@@ -10,4 +13,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+})
+router.afterEach(() => {
+  progress.done()
 })

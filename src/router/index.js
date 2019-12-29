@@ -24,7 +24,8 @@ const routes = [
       { path: 'articles', component: () => import('../views/content/index.vue') },
       { path: 'publish', component: () => import('../views/publish/index.vue') },
       { path: 'publish/:articleId', component: () => import('../views/publish/index.vue') },
-      { path: 'account', component: () => import('../views/account/index.vue') }
+      { path: 'account', component: () => import('../views/account/index.vue') },
+      { path: '*', component: () => import('../views/404.vue') }
     ]
   }
   // {
